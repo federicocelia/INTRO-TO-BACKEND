@@ -36,4 +36,25 @@ const registerUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+  try {
+    // checking if the user already exist
+    const { email, password } = req.body;
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (!user)
+      return res.status(400).json({
+        message: "User not found",
+      });
+
+    // compare passwords
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
+  } catch (error) {}
+};
+
 export { registerUser };
